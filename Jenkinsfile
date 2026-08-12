@@ -36,9 +36,8 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 sh '''
-                    echo "Running Pytest..."
-                    pip install -r requirements.txt httpx pytest
-                    pytest
+                    echo "Running Pytest inside Docker..."
+                    docker run --rm -v $(pwd):/app -w /app python:3.11-alpine sh -c "pip install -r requirements.txt httpx pytest && pytest"
                 '''
             }
         }
@@ -94,8 +93,8 @@ pipeline {
                         fi
                         
                         # 3. Update the image tag in the correct environment folder using sed
-                        # This assumes you have a deployment.yaml file in the environments folder
-                        sed -i "s|image: ${env.DOCKER_REPO}:.*|image: ${env.IMAGE}|g" ${env.TARGET_GITOPS_FOLDER}/deployment.yaml
+                        # This assumes you have an api-deployment.yaml file in the environments folder
+                        sed -i "s|image: ${env.DOCKER_REPO}:.*|image: ${env.IMAGE}|g" ${env.TARGET_GITOPS_FOLDER}/api-deployment.yaml
                         
                         # 4. Commit and Push
                         git config user.email "jenkins@bunny-automation"
