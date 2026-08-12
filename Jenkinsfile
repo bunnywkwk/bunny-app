@@ -37,7 +37,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Running Pytest inside Docker..."
-                    docker run --rm -v $(pwd):/app -w /app python:3.11-alpine sh -c "pip install -r requirements.txt httpx pytest && pytest"
+                    docker run --rm -v $(pwd):/app -w /app python:3.11-alpine sh -c "pip install -r requirements.txt httpx pytest && PYTHONPATH=. pytest"
                 '''
             }
         }
