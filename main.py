@@ -10,7 +10,13 @@ app = FastAPI(title="Bunny App Monolith")
 templates = Jinja2Templates(directory="templates")
 
 # Database Setup
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+postgres_password = os.getenv("POSTGRES_PASSWORD")
+if postgres_password:
+    default_db_url = f"postgresql://postgres:{postgres_password}@postgres:5432/postgres"
+else:
+    default_db_url = "sqlite:///./test.db"
+
+DATABASE_URL = os.getenv("DATABASE_URL", default_db_url)
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
